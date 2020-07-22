@@ -1,6 +1,7 @@
 package com.example.pokedex;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +11,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +41,7 @@ public class PokedexAdapter extends RecyclerView.Adapter<PokedexAdapter.PokedexV
                     Pokemon current = (Pokemon) containerView.getTag();
                     Intent intent = new Intent(view.getContext(), PokemonActivity.class);
                     intent.putExtra("name", current.getName());
-                    intent.putExtra("number", current.getNumber());
+                    //intent.putExtra("number", current.getNumber());
 
                     view.getContext().startActivity(intent);
                 }
@@ -39,11 +49,31 @@ public class PokedexAdapter extends RecyclerView.Adapter<PokedexAdapter.PokedexV
         }
     }
 
-    private List<Pokemon> pokemonList = Arrays.asList(
-            new Pokemon("Bulbasaur", 1),
-            new Pokemon("Ivysaur", 2),
-            new Pokemon("Venusaur", 3)
-    );
+    private List<Pokemon> pokemonList = new ArrayList<>();
+
+    public void loadPokemon() {
+        String url = "https://pokeapi.co/api/v2/pokemon?limit=151";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray results = response.getJSONArray("results");
+
+                    for (int i = 0; i < results.length(); ++i) {
+                        JSONObject result = results.getJSONObject(i);
+                        pokemonList.add(new Pokemon(result.getString("name"), result.getString("url")));
+                    }
+                } catch (JSONException e) {
+                    Log.e("test", "JSON error", e);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("test", "Pokemon list error");
+            }
+        });
+    }
 
     @NonNull
     @Override
