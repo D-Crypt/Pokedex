@@ -70,7 +70,10 @@ public class PokedexAdapter extends RecyclerView.Adapter<PokedexAdapter.PokedexV
 
                     for (int i = 0; i < results.length(); ++i) {
                         JSONObject result = results.getJSONObject(i);
-                        pokemonList.add(new Pokemon(result.getString("name"), result.getString("url")));
+                        String name = result.getString("name");
+                        pokemonList.add(new Pokemon(name.substring(0, 1).toUpperCase() + name.substring(1),
+                                                    result.getString("url")
+                        ));
                     }
 
                     notifyDataSetChanged();
