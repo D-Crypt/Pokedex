@@ -7,9 +7,11 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,17 +23,21 @@ public class PokemonActivity extends AppCompatActivity {
     private TextView type1TextView;
     private TextView type2TextView;
     private String url;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokemon);
 
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
         url = getIntent().getStringExtra("url");
         nameTextView = findViewById(R.id.pokemon_name);
         numberTextView = findViewById(R.id.pokemon_number);
         type1TextView = findViewById(R.id.pokemon_type1);
         type2TextView = findViewById(R.id.pokemon_type2);
+
+        load();
     }
 
     public void load() {
@@ -68,5 +74,7 @@ public class PokemonActivity extends AppCompatActivity {
                 Log.e("test", "Pokemon details error");
             }
         });
+
+        requestQueue.add(request);
     }
 }
