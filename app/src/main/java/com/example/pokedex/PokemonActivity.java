@@ -42,6 +42,9 @@ public class PokemonActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
+                    nameTextView.setText(response.getString("name"));
+                    numberTextView.setText(String.format("#%03d", response.getInt("id")));
+
                     JSONArray typeEntries = response.getJSONArray("types");
 
                     for (int i = 0; i < typeEntries.length(); ++i) {
