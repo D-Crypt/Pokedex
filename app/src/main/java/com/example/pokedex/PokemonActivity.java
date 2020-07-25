@@ -18,6 +18,8 @@ import org.json.JSONObject;
 public class PokemonActivity extends AppCompatActivity {
     private TextView nameTextView;
     private TextView numberTextView;
+    private TextView type1TextView;
+    private TextView type2TextView;
     private String url;
 
     @Override
@@ -28,9 +30,14 @@ public class PokemonActivity extends AppCompatActivity {
         url = getIntent().getStringExtra("url");
         nameTextView = findViewById(R.id.pokemon_name);
         numberTextView = findViewById(R.id.pokemon_number);
+        type1TextView = findViewById(R.id.pokemon_type1);
+        type2TextView = findViewById(R.id.pokemon_type2);
     }
 
     public void load() {
+        type1TextView.setText("");
+        type2TextView.setText("");
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -41,9 +48,14 @@ public class PokemonActivity extends AppCompatActivity {
                         JSONObject typeEntry = typeEntries.getJSONObject(i);
                         int slot = typeEntry.getInt("slot");
                         String type = typeEntry.getJSONObject("type").getString("name");
+
+                        if (slot == 1) {
+                            type1TextView.setText(type);
+                        } else {
+                            type2TextView.setText(type);
+                        }
                     }
-                }
-                catch (JSONException e) {
+                } catch (JSONException e) {
                     Log.e("test", "Pokemon JSON error", e);
                 }
             }
